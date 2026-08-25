@@ -3,7 +3,14 @@ name: Validate and deploy
 on:
   workflow_dispatch:
   push:
-    paths: ['data/**']
+    paths:
+      - 'data/**'
+      - 'data.json'
+      - 'index.html'
+      - 'openapi.json'
+      - '.github/workflows/deploy.yml'
+  schedule:
+    - cron: '0 6 1 1 *'
 
 permissions:
   contents: read
@@ -11,7 +18,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-iso-codes
   cancel-in-progress: true
 
 jobs:
