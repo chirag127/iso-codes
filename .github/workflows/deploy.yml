@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     paths: ['data/**']
-  schedule:
-    - cron: '0 6 1 1 *'
 
 permissions:
   contents: read
@@ -13,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-iso-codes
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -44,6 +42,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v6
+        with:
+          enablement: true
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
