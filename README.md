@@ -29,7 +29,7 @@ const data = await res.json();
 
 - Source: ISO standards
 - License: CC0-1.0
-- Last updated: `2026-08-25T02:56:36.854Z`
+- Last updated: `2026-08-25T03:04:42.584Z`
 
 See `data/` for raw JSON and `data/schema.json` for the schema.
 
