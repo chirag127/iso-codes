@@ -1,0 +1,53 @@
+name: Validate and deploy
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ['data/**']
+  schedule:
+    - cron: '0 6 1 1 *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-iso-codes
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON data files
+        run: |
+          set -euo pipefail
+          for f in data/*.json; do
+            [ "$f" = "data/schema.json" ] && continue
+            echo "validating $f"
+            node -e "JSON.parse(require('fs').readFileSync('$f'))"
+          done
+      - name: Validate OpenAPI spec
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('openapi.json'))"
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
